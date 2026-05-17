@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>myself.maddie — Magdalena Jędrzejewska</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@200;300;400;500&family=Bebas+Neue&display=swap');
+:root{--beige:#F5EFE0;--beige2:#EDE3CC;--beige3:#E0D4B8;--blue:#0085FF;--blue2:#62B4FF;--orange:#FF7E15;--black:#0A0A0A;--white:#FFFDF8;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--beige);font-family:'DM Sans',sans-serif;color:var(--black);overflow-x:hidden;}
+canvas#gc{position:fixed;inset:0;pointer-events:none;z-index:9999;}
+canvas#bgc{position:fixed;inset:0;pointer-events:none;z-index:0;}
+
+.lang-bar{position:fixed;top:20px;right:24px;z-index:1000;display:flex;background:var(--black);border-radius:100px;overflow:hidden;border:1.5px solid var(--orange);}
+.lang-btn{padding:8px 18px;font-size:11px;font-weight:500;letter-spacing:.12em;color:#888;cursor:pointer;border:none;background:transparent;transition:all .2s;}
+.lang-btn.active{background:var(--orange);color:white;}
+
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes puls{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
+@keyframes spinSlow{to{transform:rotate(360deg)}}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.df{animation:floatY 4s ease-in-out infinite;}
+.dp{animation:puls 3s ease-in-out infinite;}
+.abs-deco{position:absolute;pointer-events:none;}
+
+/* MARQUEE TWIST */
+.marquee-wrap{overflow:hidden;background:var(--black);padding:14px 0;position:relative;z-index:1;}
+.marquee-track{display:flex;width:max-content;animation:marquee 18s linear infinite;}
+.marquee-item{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.12em;color:rgba(255,255,255,.15);padding:0 32px;white-space:nowrap;}
+.marquee-item.hl{color:var(--orange);}
+
+/* HERO */
+.hero{position:relative;z-index:1;padding:80px 48px 56px;overflow:hidden;}
+.hero-eyebrow{display:flex;align-items:center;gap:12px;margin-bottom:28px;flex-wrap:wrap;}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:100px;font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;border:1px solid;}
+.pill.dark{background:var(--black);color:var(--white);border-color:var(--black);}
+.pill.orange{color:var(--orange);border-color:var(--orange);}
+.pill.blue{color:var(--blue);border-color:var(--blue);}
+.hero-title{font-family:'Playfair Display',serif;font-size:62px;line-height:1.05;font-weight:900;}
+.ht-italic{font-style:italic;color:var(--blue);}
+.ht-outline{-webkit-text-stroke:2px var(--black);color:transparent;font-style:italic;}
+.ht-orange{color:var(--orange);}
+.ht-bebas{font-family:'Bebas Neue',sans-serif;font-size:70px;font-weight:400;line-height:1;}
+.hero-sub{font-size:15px;color:#555;line-height:1.85;max-width:500px;margin-top:24px;font-weight:300;}
+.hero-badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:32px;}
+.badge{display:flex;align-items:center;gap:8px;padding:10px 18px;border-radius:100px;font-size:12px;border:1.5px solid var(--black);background:var(--white);transition:transform .3s ease,box-shadow .3s ease;cursor:default;}
+.badge:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(0,0,0,.08);}
+
+/* SECTIONS */
+.section{position:relative;z-index:1;padding:56px 48px;}
+.s-label{font-size:10px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--orange);display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.s-label::before{content:'';width:28px;height:1px;background:var(--orange);}
+.s-title{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;line-height:1.15;margin-bottom:24px;}
+.s-title em{font-style:italic;color:var(--blue);}
+
+/* PHOTOS */
+.photo-gallery{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.photo-frame-card{position:relative;cursor:pointer;}
+.pf-inner{border:2px solid var(--black);overflow:hidden;aspect-ratio:3/4.5;background:var(--beige2);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;position:relative;transition:transform .4s ease,box-shadow .4s ease;}
+.pf-inner.s1{border-radius:100px 100px 28px 28px;}
+.pf-inner.s2{border-radius:28px 100px 28px 100px;}
+.pf-inner.s3{border-radius:28px;}
+.photo-frame-card:hover .pf-inner{transform:translateY(-8px);box-shadow:0 20px 48px rgba(0,0,0,.12);}
+.pf-bg-pat{position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(0,0,0,.025) 10px,rgba(0,0,0,.025) 11px);}
+.pf-icon{width:52px;height:52px;border-radius:50%;border:2px dashed #bbb;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;transition:border-color .3s,transform .3s;}
+.photo-frame-card:hover .pf-icon{border-color:var(--orange);transform:scale(1.1);}
+.pf-icon i{font-size:22px;color:#bbb;transition:color .3s;}
+.photo-frame-card:hover .pf-icon i{color:var(--orange);}
+.pf-lbl{font-size:11px;color:#aaa;letter-spacing:.06em;position:relative;z-index:1;text-align:center;padding:0 16px;line-height:1.5;}
+.pf-badge{position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);font-size:10px;font-weight:500;letter-spacing:.1em;padding:6px 16px;border-radius:100px;white-space:nowrap;border:2px solid var(--beige);z-index:2;}
+.pf-badge.o{background:var(--orange);color:white;}
+.pf-badge.b{background:var(--blue);color:white;}
+.pf-badge.k{background:var(--black);color:white;}
+
+/* PHONES */
+.phones-row{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;align-items:start;}
+.phone-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;}
+.phone-frame{width:100%;max-width:200px;background:var(--black);border-radius:38px;padding:10px;border:2px solid #1a1a1a;box-shadow:0 20px 60px rgba(0,0,0,.3),inset 0 0 0 1px #2a2a2a;transition:transform .4s ease,box-shadow .4s ease;}
+.phone-frame:hover{transform:translateY(-8px) scale(1.02);box-shadow:0 32px 80px rgba(0,0,0,.35);}
+.phone-notch{width:76px;height:20px;background:var(--black);border-radius:0 0 12px 12px;margin:0 auto 7px;display:flex;align-items:center;justify-content:center;gap:5px;}
+.nc{width:7px;height:7px;border-radius:50%;background:#1a1a1a;border:1px solid #333;}
+.ns{width:18px;height:3px;border-radius:2px;background:#1a1a1a;}
+.phone-screen{border-radius:26px;overflow:hidden;background:#0a0a0a;aspect-ratio:9/16;position:relative;cursor:pointer;}
+.phone-screen video{width:100%;height:100%;object-fit:cover;display:block;}
+.ph-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:linear-gradient(160deg,#141414,#0a0a0a);position:relative;}
+.ph-placeholder::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,133,255,.06) 0%,rgba(255,126,21,.05) 100%);}
+.vid-tag{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);color:white;font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:100px;border:1px solid rgba(255,255,255,.1);z-index:2;}
+.up-btn{display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;position:relative;z-index:1;}
+.up-circle{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;transition:all .3s ease;}
+.phone-screen:hover .up-circle{background:var(--orange);border-color:var(--orange);transform:scale(1.1);}
+.up-circle i{font-size:20px;color:white;}
+.up-hint{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.05em;text-align:center;}
+.phone-bar{width:70px;height:4px;background:#222;border-radius:2px;margin:8px auto 0;}
+.file-input{display:none;}
+.up-label{display:inline-flex;align-items:center;gap:7px;padding:9px 20px;border-radius:100px;background:var(--white);border:1.5px solid var(--beige3);font-size:11px;font-weight:500;color:#555;cursor:pointer;transition:all .3s ease;white-space:nowrap;}
+.up-label:hover{border-color:var(--orange);color:var(--orange);transform:translateY(-2px);}
+.fname{font-size:10px;color:#aaa;text-align:center;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* ABOUT */
+.about-layout{display:grid;grid-template-columns:1fr 1.6fr;gap:32px;align-items:start;}
+.photo-box-main{border-radius:140px 140px 24px 24px;border:2px solid var(--black);overflow:hidden;aspect-ratio:3/4.2;background:var(--beige2);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;position:relative;}
+.pibg{position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 8px,rgba(0,133,255,.04) 8px,rgba(0,133,255,.04) 9px);}
+.avatar{width:76px;height:76px;border-radius:50%;background:var(--black);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:30px;font-style:italic;color:var(--white);position:relative;z-index:1;}
+.ph-hint{font-size:11px;color:#aaa;letter-spacing:.06em;position:relative;z-index:1;}
+.sticker{position:absolute;border-radius:16px;padding:8px 14px;font-size:11px;font-weight:500;display:flex;align-items:center;gap:6px;white-space:nowrap;box-shadow:3px 3px 0 var(--black);border:1.5px solid;transition:transform .3s ease;}
+.sticker:hover{transform:rotate(-3deg) scale(1.05);}
+.st-o{background:var(--orange);color:white;border-color:var(--orange);}
+.st-b{background:var(--blue);color:white;border-color:var(--blue);}
+.about-text p{font-size:14px;color:#444;line-height:1.9;margin-bottom:16px;font-weight:300;}
+.about-text p strong{font-weight:500;color:var(--black);}
+.hl-box{border-left:3px solid var(--orange);padding:14px 20px;background:rgba(255,126,21,.06);border-radius:0 12px 12px 0;font-size:13.5px;font-style:italic;color:#333;line-height:1.8;margin:18px 0;}
+.fun-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;}
+.fun-chip{display:flex;align-items:center;gap:7px;padding:8px 16px;border-radius:100px;border:1px solid var(--beige3);background:var(--white);font-size:12px;color:#444;transition:transform .3s ease,border-color .3s;}
+.fun-chip:hover{transform:translateY(-3px);border-color:var(--orange);}
+
+/* SKILLS */
+.skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:24px;}
+.skill-card{border:1.5px solid var(--black);border-radius:20px;padding:22px 20px;background:var(--white);position:relative;overflow:hidden;transition:transform .4s ease,box-shadow .4s ease;}
+.skill-card:hover{transform:translateY(-6px);box-shadow:0 16px 40px rgba(0,0,0,.1);}
+.skill-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.sk-b::before{background:var(--blue);}
+.sk-o::before{background:var(--orange);}
+.sk-k::before{background:var(--black);}
+.sk-b2::before{background:var(--blue2);}
+.sk-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;}
+.sk-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;}
+.si-b{background:rgba(0,133,255,.1);color:var(--blue);}
+.si-o{background:rgba(255,126,21,.1);color:var(--orange);}
+.si-k{background:rgba(10,10,10,.07);color:var(--black);}
+.si-b2{background:rgba(98,180,255,.15);color:var(--blue2);}
+.sk-bdg{font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:100px;white-space:nowrap;}
+.skb-p{background:var(--black);color:var(--white);}
+.skb-c{background:var(--orange);color:white;}
+.sk-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;margin-bottom:5px;}
+.sk-desc{font-size:12px;color:#666;line-height:1.65;}
+.sk-hl{font-size:11px;color:var(--orange);font-weight:500;margin-top:8px;}
+
+/* PHILOSOPHY */
+.philosophy{background:var(--black);margin:0 48px;border-radius:28px;padding:52px 52px;position:relative;overflow:hidden;z-index:1;}
+.philosophy::before{content:'"';position:absolute;font-family:'Playfair Display',serif;font-size:280px;line-height:1;color:rgba(255,255,255,.03);top:-60px;left:30px;pointer-events:none;}
+.ph-grid{display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr;gap:36px;align-items:start;}
+.ph-div{background:rgba(255,255,255,.1);}
+.ph-num{font-family:'Bebas Neue',sans-serif;font-size:56px;color:var(--orange);line-height:1;}
+.ph-label{font-family:'Playfair Display',serif;font-size:17px;color:var(--white);font-style:italic;margin:4px 0 8px;}
+.ph-text{font-size:12px;color:#666;line-height:1.8;}
+
+/* OFFER */
+.offer-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:24px;}
+.offer-card{border:1.5px solid var(--black);border-radius:22px;padding:28px 24px;background:var(--white);position:relative;overflow:hidden;transition:transform .4s ease,box-shadow .4s ease;}
+.offer-card:hover{transform:translateY(-6px);box-shadow:0 20px 48px rgba(0,0,0,.1);}
+.offer-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;}
+.oc1::after{background:var(--blue);}
+.oc2::after{background:var(--orange);}
+.oc3::after{background:var(--black);}
+.oc4::after{background:var(--blue2);}
+.oc-n{font-family:'Bebas Neue',sans-serif;font-size:52px;line-height:1;opacity:.07;position:absolute;top:14px;right:20px;}
+.oc-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:22px;}
+.oi1{background:rgba(0,133,255,.1);color:var(--blue);}
+.oi2{background:rgba(255,126,21,.1);color:var(--orange);}
+.oi3{background:rgba(10,10,10,.07);color:var(--black);}
+.oi4{background:rgba(98,180,255,.15);color:var(--blue2);}
+.oc-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;margin-bottom:8px;}
+.oc-desc{font-size:12.5px;color:#666;line-height:1.7;}
+.oc-list{margin-top:12px;display:flex;flex-direction:column;gap:5px;}
+.oc-li{font-size:11.5px;color:#555;display:flex;align-items:center;gap:6px;}
+.oc-li::before{content:'✦';font-size:9px;opacity:.5;}
+
+/* CTA */
+.cta{margin:48px 48px;border-radius:28px;padding:56px 52px;background:var(--beige2);border:1.5px solid var(--black);position:relative;overflow:hidden;z-index:1;}
+.cta::before{content:'';position:absolute;width:320px;height:320px;border:55px solid rgba(255,126,21,.1);border-radius:50%;right:-80px;top:-100px;}
+.cta-inner{display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap;}
+.cta-h{font-family:'Playfair Display',serif;font-size:34px;font-weight:700;line-height:1.2;}
+.cta-h em{font-style:italic;color:var(--orange);}
+.cta-sub{font-size:13.5px;color:#666;margin-top:10px;line-height:1.7;}
+.cta-mail{display:inline-flex;align-items:center;gap:8px;margin-top:16px;font-size:14px;color:var(--blue);font-weight:500;text-decoration:none;transition:color .2s;}
+.cta-mail:hover{color:var(--orange);}
+.socials-row{display:flex;gap:10px;margin-top:14px;}
+.s-icon{width:42px;height:42px;border-radius:50%;border:1.5px solid var(--black);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;transition:all .3s ease;background:transparent;text-decoration:none;color:var(--black);}
+.s-icon:hover{background:var(--black);color:var(--white);transform:translateY(-3px);}
+
+[data-lang]{display:none;}
+[data-lang].show{display:block;}
+.s-label[data-lang].show{display:flex;}
+</style>
+</head>
+<body>
+
+<canvas id="bgc"></canvas>
+<canvas id="gc"></canvas>
+
+<div class="lang-bar">
+  <button class="lang-btn active" onclick="setLang('pl')">PL</button>
+  <button class="lang-btn" onclick="setLang('en')">EN</button>
+</div>
+
+<!-- MARQUEE TWIST -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="marquee-item">MYSELF.MADDIE</span>
+    <span class="marquee-item hl">✦</span>
+    <span class="marquee-item">FASHION</span>
+    <span class="marquee-item hl">✦</span>
+    <span class="marquee-item">BEAUTY</span>
+    <span class="marquee-item hl">✦</span>
+    <span class="marquee-item">LIFESTYLE</span>
+    <span class="marquee-item hl">✦</span>
+    <span class="marquee-item">CONTENT CREATOR</span>
+    <span class="marquee-item hl">✦</span>
+    <span class="marquee-item">WARSZAWA</span>
+    <span class="marquee-item hl">✦</span>
+    <span class="marquee-item">BOLD VISUALS</span>
+    <span class="marquee-item hl">✦</span>
+    <span class="marquee-item">REAL STORIES</span>
+    <span class="marquee-item hl">✦</span>
+    <span class="marquee-item">MYSELF.MADDIE</span>
+    <span class="marquee-item hl">✦</span>
+    <span class="marquee-item">FASHION</span>
+    <span class="marquee-item hl">✦</span>
+    <span class="marquee-item">BEAUTY</span>
+    <span class="marquee-item hl">✦</span>
+    <span class="marquee-item">LIFESTYLE</span>
+    <span class="marquee-item hl">✦</span>
+    <span class="marquee-item">CONTENT CREATOR</span>
+    <span class="marquee-item hl">✦</span>
+    <span class="marquee-item">WARSZAWA</span>
+    <span class="marquee-item hl">✦</span>
+    <span class="marquee-item">BOLD VISUALS</span>
+    <span class="marquee-item hl">✦</span>
+    <span class="marquee-item">REAL STORIES</span>
+    <span class="marquee-item hl">✦</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="abs-deco df" style="top:40px;right:80px;"><svg width="160" height="160" viewBox="0 0 160 160"><circle cx="80" cy="80" r="78" fill="none" stroke="#0085FF" stroke-width="1" opacity=".2"/><circle cx="80" cy="80" r="56" fill="none" stroke="#FF7E15" stroke-width="1" opacity=".15"/></svg></div>
+  <div class="abs-deco df" style="top:50px;right:148px;"><svg width="40" height="40" viewBox="0 0 40 40"><path d="M20 0 L24 16 L40 20 L24 24 L20 40 L16 24 L0 20 L16 16 Z" fill="#FF7E15" opacity=".75"/></svg></div>
+  <div class="abs-deco dp" style="top:160px;right:210px;"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 0 L10 6 L16 8 L10 10 L8 16 L6 10 L0 8 L6 6 Z" fill="#62B4FF" opacity=".8"/></svg></div>
+  <div class="abs-deco" style="top:-8px;left:18px;opacity:.2;"><svg width="76" height="52" viewBox="0 0 76 52"><path d="M38 26 C27 8,0 4,4 21 C8 36,28 30,38 26Z" fill="#FF7E15"/><path d="M38 26 C49 8,76 4,72 21 C68 36,48 30,38 26Z" fill="#FF7E15"/><circle cx="38" cy="26" r="6" fill="#FF7E15"/></svg></div>
+
+  <div class="hero-eyebrow">
+    <span class="pill dark">✦ myself.maddie</span>
+    <span class="pill orange">Content Creator</span>
+    <span class="pill blue">Warszawa</span>
+  </div>
+  <div class="hero-title">
+    <div class="ht-italic">Magdalena.</div>
+    <div><span class="ht-outline">Bold</span> <span class="ht-orange">Visuals,</span></div>
+    <div class="ht-bebas">Real Stories.</div>
+  </div>
+  <p class="hero-sub" data-lang="pl" style="display:block;">Pracuję w dziale business development i równolegle buduję swoją drogę jako content creatorka w modzie, urodzie i lifestyle'u. Wiem, jak myśli marka i co chce zobaczyć odbiorca - i właśnie to połączenie daje mi przewagę.</p>
+  <p class="hero-sub" data-lang="en">I work in the business development department and I'm building my path as a content creator in fashion, beauty and lifestyle alongside that. I know how a brand thinks and what an audience wants to see - and that combination is my edge.</p>
+  <div class="hero-badges">
+    <div class="badge">🐴 <span data-lang="pl" class="show">Jeżdżę konno</span><span data-lang="en">I ride horses</span></div>
+    <div class="badge">🎲 <span data-lang="pl" class="show">Przegrywam w planszówki</span><span data-lang="en">I lose at board games</span></div>
+    <div class="badge">🎬 <span data-lang="pl" class="show">Filmy ze Stathamem</span><span data-lang="en">Statham movies</span></div>
+    <div class="badge">🍳 <span data-lang="pl" class="show">Lubię gotować</span><span data-lang="en">I love cooking</span></div>
+    <div class="badge">🥗 Healthy lifestyle</div>
+    <div class="badge">✨ <span data-lang="pl" class="show">Dusza lat 90.</span><span data-lang="en">90s soul</span></div>
+  </div>
+</div>
+
+<!-- PHOTOS -->
+<div class="section" style="padding-top:0;">
+  <div class="s-label" data-lang="pl" style="display:flex;">Kto stoi za kontentem</div>
+  <div class="s-label" data-lang="en">The face behind the content</div>
+  <div class="s-title" data-lang="pl" style="display:block;"><em>To ja</em> - trochę poza kadrem.</div>
+  <div class="s-title" data-lang="en"><em>That's me</em> - a little behind the frame.</div>
+  <div class="photo-gallery">
+    <div class="photo-frame-card"><div class="pf-inner s1"><div class="pf-bg-pat"></div><div class="pf-icon"><i class="ti ti-user"></i></div><div class="pf-lbl" data-lang="pl" style="display:block;">Portret 3/4<br>elegancki look</div><div class="pf-lbl" data-lang="en">3/4 portrait<br>elegant look</div></div><div class="pf-badge o">Look 01</div></div>
+    <div class="photo-frame-card" style="margin-top:32px;"><div class="pf-inner s2"><div class="pf-bg-pat"></div><div class="pf-icon"><i class="ti ti-user-circle"></i></div><div class="pf-lbl" data-lang="pl" style="display:block;">Cała sylwetka<br>statement piece</div><div class="pf-lbl" data-lang="en">Full body<br>statement piece</div></div><div class="pf-badge b">Look 02</div></div>
+    <div class="photo-frame-card"><div class="pf-inner s3"><div class="pf-bg-pat"></div><div class="pf-icon"><i class="ti ti-camera"></i></div><div class="pf-lbl" data-lang="pl" style="display:block;">Lifestyle shot<br>casual z charakterem</div><div class="pf-lbl" data-lang="en">Lifestyle shot<br>casual with character</div></div><div class="pf-badge k">Look 03</div></div>
+  </div>
+</div>
+
+<!-- VIDEOS -->
+<div class="section" style="padding-top:0;">
+  <div class="s-label" data-lang="pl" style="display:flex;">Moje filmy</div>
+  <div class="s-label" data-lang="en">My videos</div>
+  <div class="s-title" data-lang="pl" style="display:block;"><em>To, co tworzę</em> - wrzuć swoje filmiki.</div>
+  <div class="s-title" data-lang="en"><em>What I create</em> - add your videos.</div>
+  <div class="phones-row">
+    <div class="phone-wrap"><div class="phone-frame"><div class="phone-notch"><div class="nc"></div><div class="ns"></div></div><div class="phone-screen" id="ps1"><div class="ph-placeholder" id="pp1"><div class="vid-tag">Reel 01</div><label class="up-btn" for="fi1"><div class="up-circle"><i class="ti ti-plus"></i></div><span class="up-hint" data-lang="pl" style="display:block;">Dodaj filmik<br>z telefonu</span><span class="up-hint" data-lang="en">Add video<br>from phone</span></label></div></div><div class="phone-bar"></div></div><input class="file-input" type="file" id="fi1" accept="video/*" onchange="loadVid(1,this)"><label class="up-label" for="fi1"><i class="ti ti-upload"></i><span data-lang="pl" class="show">Wybierz z galerii</span><span data-lang="en">Choose from gallery</span></label><div class="fname" id="fn1">brak pliku</div></div>
+    <div class="phone-wrap" style="margin-top:44px;"><div class="phone-frame"><div class="phone-notch"><div class="nc"></div><div class="ns"></div></div><div class="phone-screen" id="ps2"><div class="ph-placeholder" id="pp2"><div class="vid-tag">Reel 02</div><label class="up-btn" for="fi2"><div class="up-circle"><i class="ti ti-plus"></i></div><span class="up-hint" data-lang="pl" style="display:block;">Dodaj filmik<br>z telefonu</span><span class="up-hint" data-lang="en">Add video<br>from phone</span></label></div></div><div class="phone-bar"></div></div><input class="file-input" type="file" id="fi2" accept="video/*" onchange="loadVid(2,this)"><label class="up-label" for="fi2"><i class="ti ti-upload"></i><span data-lang="pl" class="show">Wybierz z galerii</span><span data-lang="en">Choose from gallery</span></label><div class="fname" id="fn2">brak pliku</div></div>
+    <div class="phone-wrap"><div class="phone-frame"><div class="phone-notch"><div class="nc"></div><div class="ns"></div></div><div class="phone-screen" id="ps3"><div class="ph-placeholder" id="pp3"><div class="vid-tag">Reel 03</div><label class="up-btn" for="fi3"><div class="up-circle"><i class="ti ti-plus"></i></div><span class="up-hint" data-lang="pl" style="display:block;">Dodaj filmik<br>z telefonu</span><span class="up-hint" data-lang="en">Add video<br>from phone</span></label></div></div><div class="phone-bar"></div></div><input class="file-input" type="file" id="fi3" accept="video/*" onchange="loadVid(3,this)"><label class="up-label" for="fi3"><i class="ti ti-upload"></i><span data-lang="pl" class="show">Wybierz z galerii</span><span data-lang="en">Choose from gallery</span></label><div class="fname" id="fn3">brak pliku</div></div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div class="section" style="padding-top:0;">
+  <div class="s-label" data-lang="pl" style="display:flex;">O mnie</div>
+  <div class="s-label" data-lang="en">About me</div>
+  <div class="about-layout">
+    <div style="position:relative;">
+      <div class="photo-box-main"><div class="pibg"></div><div class="avatar">M</div><span class="ph-hint">your photo here</span></div>
+      <div class="sticker st-o" style="bottom:24px;left:-16px;"><i class="ti ti-heart-filled" style="font-size:13px;"></i> Fashion & Beauty</div>
+      <div class="sticker st-b" style="top:30px;right:-20px;transform:rotate(5deg);"><i class="ti ti-sparkles" style="font-size:13px;"></i> Maximalist</div>
+      <div class="abs-deco df" style="top:-18px;right:-18px;"><svg width="32" height="32" viewBox="0 0 32 32"><path d="M16 0 L19 13 L32 16 L19 19 L16 32 L13 19 L0 16 L13 13 Z" fill="#FF7E15" opacity=".9"/></svg></div>
+    </div>
+    <div class="about-text">
+      <div data-lang="pl" style="display:block;">
+        <div class="s-title" style="font-size:30px;">Na etacie w sprzedaży B2B,<br><em>po godzinach - content.</em></div>
+        <p>Pracuję w dziale business development i to jest moja codzienna praca, którą traktuję poważnie. Mam kontakt z markami takimi jak Tesla, BYD czy Mercedes, ale w roli biznesowej, nie kreatywnej. To doświadczenie daje mi coś cennego: <strong>wiem, jak marka myśli, zanim jeszcze usiądzie do briefingu.</strong></p>
+        <div class="hl-box">„Wierzę, że dobra tożsamość marki powinna czuć się jak wejście w inny świat - nie jak kolejny post do przewinięcia."</div>
+        <p>Równolegle studiuję AI w biznesie i buduję swoją drogę jako content creatorka w modzie, urodzie i lifestyle'u. Jestem na początku tej drogi - z pełnym zaangażowaniem, świeżym spojrzeniem i dużym apetytem na więcej.</p>
+      </div>
+      <div data-lang="en">
+        <div class="s-title" style="font-size:30px;">Full-time in B2B sales,<br><em>after hours - content.</em></div>
+        <p>I work in the business development department and that's my day job - I take it seriously. I deal with brands like Tesla, BYD and Mercedes, but in a business role, not a creative one. That experience gives me something valuable: <strong>I know how a brand thinks before they even sit down to write a brief.</strong></p>
+        <div class="hl-box">"I believe a strong brand identity should feel like stepping into another world - not just another post to scroll past."</div>
+        <p>Alongside that, I study AI in business and I'm building my path as a content creator in fashion, beauty and lifestyle. I'm at the start of this journey - fully committed, with a fresh perspective and a big appetite for more.</p>
+      </div>
+      <div class="fun-row">
+        <div class="fun-chip"><i class="ti ti-horse"></i><span data-lang="pl" class="show">Jeżdżę konno</span><span data-lang="en">I ride horses</span></div>
+        <div class="fun-chip"><i class="ti ti-device-gamepad-2"></i><span data-lang="pl" class="show">Przegrywam w planszówki</span><span data-lang="en">I lose at board games</span></div>
+        <div class="fun-chip"><i class="ti ti-movie"></i><span data-lang="pl" class="show">Filmy ze Stathamem</span><span data-lang="en">Statham movies</span></div>
+        <div class="fun-chip"><i class="ti ti-tools-kitchen-2"></i><span data-lang="pl" class="show">Lubię gotować</span><span data-lang="en">I love cooking</span></div>
+        <div class="fun-chip"><i class="ti ti-leaf"></i> Healthy lifestyle</div>
+        <div class="fun-chip"><i class="ti ti-vinyl"></i><span data-lang="pl" class="show">Dusza lat 90.</span><span data-lang="en">90s soul</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SKILLS -->
+<div class="section" style="padding-top:0;">
+  <div class="s-label" data-lang="pl" style="display:flex;">Co wnoszę dla marek</div>
+  <div class="s-label" data-lang="en">What I bring to brands</div>
+  <div class="skills-grid">
+    <div class="skill-card sk-b"><div class="sk-top"><div class="sk-icon si-b"><i class="ti ti-chart-line"></i></div><span class="sk-bdg skb-p"><span data-lang="pl" class="show">Biegły</span><span data-lang="en">Proficient</span></span></div><div class="sk-title">Google Ads & Analytics</div><div class="sk-desc" data-lang="pl" style="display:block;">Potrafię zmierzyć, czy content działa - nie tylko go stworzyć. Wiem, co mówią dane i umiem wyciągać z nich wnioski.</div><div class="sk-desc" data-lang="en">I can measure whether content works - not just create it. I understand what the data says and how to act on it.</div></div>
+    <div class="skill-card sk-o"><div class="sk-top"><div class="sk-icon si-o"><i class="ti ti-building-skyscraper"></i></div><span class="sk-bdg skb-p"><span data-lang="pl" class="show">Doświadczenie</span><span data-lang="en">Experience</span></span></div><div class="sk-title"><span data-lang="pl" class="show">Marki premium</span><span data-lang="en">Premium brands</span></div><div class="sk-desc" data-lang="pl" style="display:block;">Pracuję w dziale BD z markami takimi jak Tesla, BYD, Mercedes. Znam ich standard komunikacji od środka - to wpływa na każdy projekt kreatywny.</div><div class="sk-desc" data-lang="en">I work in BD with brands like Tesla, BYD, Mercedes. I know their communication standard from the inside - that shapes every creative project.</div><div class="sk-hl">✦ DMPD Business Development</div></div>
+    <div class="skill-card sk-k"><div class="sk-top"><div class="sk-icon si-k"><i class="ti ti-handshake"></i></div><span class="sk-bdg skb-c"><span data-lang="pl" class="show">Certyfikat</span><span data-lang="en">Certified</span></span></div><div class="sk-title"><span data-lang="pl" class="show">Negocjacje</span><span data-lang="en">Negotiations</span></div><div class="sk-desc" data-lang="pl" style="display:block;">Mam certyfikowane szkolenie z negocjacji NAP z Poczdamu. Rozmowy o warunkach współpracy to dla mnie codzienność - nie stres.</div><div class="sk-desc" data-lang="en">NAP certified negotiation training from Potsdam. Talking collaboration terms is everyday life for me - not a stress point.</div><div class="sk-hl">✦ NAP · Potsdam</div></div>
+    <div class="skill-card sk-b2"><div class="sk-top"><div class="sk-icon si-b2"><i class="ti ti-language"></i></div><span class="sk-bdg skb-c">FCE · B2/C1</span></div><div class="sk-title"><span data-lang="pl" class="show">Angielski</span><span data-lang="en">English</span></div><div class="sk-desc" data-lang="pl" style="display:block;">Certyfikat Cambridge FCE. Swobodnie komunikuję się z zagranicznymi markami - briefingi, umowy, maile. Szykuję się do egzaminu C1.</div><div class="sk-desc" data-lang="en">Cambridge FCE certificate. I communicate easily with international brands - briefings, contracts, emails. Preparing for C1.</div><div class="sk-hl">✦ Cambridge C1 w trakcie 🎯</div></div>
+    <div class="skill-card sk-o"><div class="sk-top"><div class="sk-icon si-o"><i class="ti ti-brain"></i></div><span class="sk-bdg skb-p"><span data-lang="pl" class="show">Studia</span><span data-lang="en">Studies</span></span></div><div class="sk-title">AI w biznesie</div><div class="sk-desc" data-lang="pl" style="display:block;">Studiuję AI w biznesie i aktywnie wdrażam to w codzienną pracę. Content tworzony z głową, nie tylko estetyką.</div><div class="sk-desc" data-lang="en">I study AI in business and actively apply it to my daily work. Content created with intelligence, not just aesthetics.</div><div class="sk-hl">✦ <span data-lang="pl" class="show">W trakcie</span><span data-lang="en">In progress</span> 🎯</div></div>
+    <div class="skill-card sk-b"><div class="sk-top"><div class="sk-icon si-b"><i class="ti ti-camera"></i></div><span class="sk-bdg skb-p"><span data-lang="pl" class="show">Narzędzia</span><span data-lang="en">Tools</span></span></div><div class="sk-title">Canva & CapCut</div><div class="sk-desc" data-lang="pl" style="display:block;">Tworzę content foto i wideo na co dzień. Spójna estetyka, gotowe formaty, żadnej agencji w środku.</div><div class="sk-desc" data-lang="en">I create photo and video content daily. Cohesive aesthetic, ready formats, no agency in between.</div><div class="sk-hl">✦ Daily practice</div></div>
+  </div>
+</div>
+
+<!-- PHILOSOPHY -->
+<div class="philosophy">
+  <div class="abs-deco df" style="top:20px;right:52px;"><svg width="22" height="22" viewBox="0 0 22 22"><path d="M11 0 L13 8.5 L22 11 L13 13.5 L11 22 L9 13.5 L0 11 L9 8.5 Z" fill="#FF7E15" opacity=".6"/></svg></div>
+  <div class="ph-grid">
+    <div><div class="ph-num">01</div><div class="ph-label" data-lang="pl" style="display:block;">Odbiorca przed estetyką</div><div class="ph-label" data-lang="en">Audience before aesthetics</div><div class="ph-text" data-lang="pl" style="display:block;">Ładny post to za mało. Myślę o tym, do kogo mówię - zanim zacznę myśleć o tym, jak to będzie wyglądać.</div><div class="ph-text" data-lang="en">A pretty post isn't enough. I think about who I'm talking to before I think about how it'll look.</div></div>
+    <div class="ph-div"></div>
+    <div><div class="ph-num">02</div><div class="ph-label" data-lang="pl" style="display:block;">Maksymalizm z głową</div><div class="ph-label" data-lang="en">Intentional maximalism</div><div class="ph-text" data-lang="pl" style="display:block;">Lubię odważne wizualie i layered storytelling - ale każdy element ma cel. Maksymalizm bez punktu widzenia to po prostu chaos.</div><div class="ph-text" data-lang="en">I love bold visuals and layered storytelling - but every element has a purpose. Maximalism without a point of view is just noise.</div></div>
+    <div class="ph-div"></div>
+    <div><div class="ph-num">03</div><div class="ph-label" data-lang="pl" style="display:block;">Świat, nie tylko feed</div><div class="ph-label" data-lang="en">A world, not just a feed</div><div class="ph-text" data-lang="pl" style="display:block;">Silna marka powinna czuć się jak miejsce, do którego chcesz wracać - nie kolejna rzecz do przewinięcia.</div><div class="ph-text" data-lang="en">A strong brand should feel like a place you want to return to - not just another thing to scroll past.</div></div>
+  </div>
+</div>
+
+<!-- OFFER -->
+<div class="section">
+  <div class="s-label" data-lang="pl" style="display:flex;">Co oferuję</div>
+  <div class="s-label" data-lang="en">What I offer</div>
+  <div class="offer-grid">
+    <div class="offer-card oc1"><div class="oc-n">01</div><div class="oc-icon oi1"><i class="ti ti-camera"></i></div><div class="oc-title">Content Creation</div><div class="oc-desc" data-lang="pl" style="display:block;">Tworzę zdjęcia i wideo w maksymalistycznej estetyce - content, który wygląda jak świat marki, nie jak kolejny post.</div><div class="oc-desc" data-lang="en">I create photos and videos in maximalist aesthetic - content that looks like a brand world, not just another post.</div><div class="oc-list"><div class="oc-li">Canva + CapCut</div><div class="oc-li"><span data-lang="pl" class="show">Reelsy, stories, statyki</span><span data-lang="en">Reels, stories, statics</span></div></div></div>
+    <div class="offer-card oc2"><div class="oc-n">02</div><div class="oc-icon oi2"><i class="ti ti-writing"></i></div><div class="oc-title">UGC & recenzje</div><div class="oc-desc" data-lang="pl" style="display:block;">Tworzę autentyczny content dla marek z obszaru mody, urody i lifestyle'u - haule, recenzje, unboxingi.</div><div class="oc-desc" data-lang="en">I create authentic UGC for fashion, beauty and lifestyle brands - hauls, reviews, unboxings.</div><div class="oc-list"><div class="oc-li">Fashion · Beauty · Lifestyle</div><div class="oc-li"><span data-lang="pl" class="show">Haule & recenzje</span><span data-lang="en">Hauls & reviews</span></div></div></div>
+    <div class="offer-card oc3"><div class="oc-n">03</div><div class="oc-icon oi3"><i class="ti ti-brand-instagram"></i></div><div class="oc-title" data-lang="pl" style="display:block;">Współpraca z marką</div><div class="oc-title" data-lang="en">Brand collaboration</div><div class="oc-desc" data-lang="pl" style="display:block;">Dla marek, które mają charakter i nie boją się go pokazać. Znam standard premium od środka i swobodnie komunikuję się po angielsku.</div><div class="oc-desc" data-lang="en">For brands that have character and aren't afraid to show it. I know the premium standard from the inside and communicate fluently in English.</div><div class="oc-list"><div class="oc-li"><span data-lang="pl" class="show">Lokowania produktów</span><span data-lang="en">Product placements</span></div><div class="oc-li"><span data-lang="pl" class="show">Kolaboracje z twórcami</span><span data-lang="en">Creator collabs</span></div></div></div>
+    <div class="offer-card oc4"><div class="oc-n">04</div><div class="oc-icon oi4"><i class="ti ti-confetti"></i></div><div class="oc-title" data-lang="pl" style="display:block;">Eventy & press tripy</div><div class="oc-title" data-lang="en">Events & press trips</div><div class="oc-desc" data-lang="pl" style="display:block;">Chętnie pojawiam się na eventach marek i tworzę relację na żywo - stories, reelsy, statyki z miejsca zdarzenia.</div><div class="oc-desc" data-lang="en">I'm happy to attend brand events and create live coverage - stories, reels, statics from the scene.</div><div class="oc-list"><div class="oc-li"><span data-lang="pl" class="show">Relacje na żywo</span><span data-lang="en">Live coverage</span></div><div class="oc-li">Press trips</div></div></div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta">
+  <div style="position:absolute;top:-18px;left:38px;opacity:.25;"><svg width="66" height="48" viewBox="0 0 66 48"><path d="M33 24 C24 8,0 4,4 19 C8 32,26 27,33 24Z" fill="#FF7E15"/><path d="M33 24 C42 8,66 4,62 19 C58 32,40 27,33 24Z" fill="#FF7E15"/><circle cx="33" cy="24" r="5" fill="#FF7E15"/></svg></div>
+  <div class="cta-inner">
+    <div>
+      <div class="cta-h" data-lang="pl" style="display:block;">Chcesz coś<br><em>razem stworzyć?</em></div>
+      <div class="cta-h" data-lang="en">Want to create<br><em>something together?</em></div>
+      <div class="cta-sub" data-lang="pl" style="display:block;">Chętnie porozmawiam o współpracy - napisz, a odezwę się.</div>
+      <div class="cta-sub" data-lang="en">I'd love to talk about working together - reach out and I'll get back to you.</div>
+      <a class="cta-mail" href="mailto:magda.jed@gmail.com"><i class="ti ti-mail" style="font-size:16px;"></i> magda.jed@gmail.com</a>
+      <div class="socials-row">
+        <a class="s-icon" href="#"><i class="ti ti-brand-instagram"></i></a>
+        <a class="s-icon" href="#"><i class="ti ti-brand-tiktok"></i></a>
+      </div>
+    </div>
+  </div>
+</div>
+<div style="height:48px;"></div>
+
+<script>
+let lang='pl';
+function setLang(l){lang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.textContent===l.toUpperCase()));document.querySelectorAll('[data-lang]').forEach(el=>{const show=el.getAttribute('data-lang')===l;if(el.classList.contains('s-label'))el.style.display=show?'flex':'none';else el.style.display=show?'block':'none';});}
+function loadVid(n,input){const file=input.files[0];if(!file)return;const url=URL.createObjectURL(file);const screen=document.getElementById('ps'+n);document.getElementById('pp'+n).style.display='none';const v=document.createElement('video');v.src=url;v.controls=true;v.loop=true;v.autoplay=true;v.muted=true;v.style.cssText='width:100%;height:100%;object-fit:cover;display:block;';screen.appendChild(v);document.getElementById('fn'+n).textContent=file.name.length>22?file.name.slice(0,19)+'...':file.name;}
+const bgc=document.getElementById('bgc'),bgx=bgc.getContext('2d');
+function rBg(){bgc.width=window.innerWidth;bgc.height=window.innerHeight;}rBg();window.addEventListener('resize',rBg);
+const BC=['rgba(255,126,21,','rgba(0,133,255,','rgba(98,180,255,','rgba(255,255,255,','rgba(245,239,224,','rgba(255,176,122,'];
+const bpts=[];
+class BD{constructor(){this.x=Math.random()*bgc.width;this.y=Math.random()*bgc.height;this.sz=Math.random()*1.8+0.3;this.col=BC[Math.floor(Math.random()*BC.length)];this.maxAl=Math.random()*.45+.1;this.phase=Math.random()*Math.PI*2;this.speed=Math.random()*.015+.004;this.star=Math.random()>.5;this.ss=Math.random()*3+1;}draw(t){const a=this.maxAl*(.5+.5*Math.sin(t*this.speed+this.phase));bgx.save();bgx.globalAlpha=a;bgx.fillStyle=this.col+'1)';if(this.star){bgx.translate(this.x,this.y);const s=this.ss;bgx.beginPath();for(let i=0;i<8;i++){const ang=(i/8)*Math.PI*2,r=i%2===0?s:s*.38;i===0?bgx.moveTo(Math.cos(ang)*r,Math.sin(ang)*r):bgx.lineTo(Math.cos(ang)*r,Math.sin(ang)*r);}bgx.closePath();bgx.fill();}else{bgx.beginPath();bgx.arc(this.x,this.y,this.sz,0,Math.PI*2);bgx.fill();}bgx.restore();}}
+for(let i=0;i<300;i++)bpts.push(new BD());
+const clusters=Array.from({length:12},()=>({x:Math.random()*bgc.width,y:Math.random()*bgc.height,col:BC[Math.floor(Math.random()*BC.length)],r:Math.random()*45+20,phase:Math.random()*Math.PI*2,speed:Math.random()*.008+.003}));
+let t=0;
+function bgA(){bgx.clearRect(0,0,bgc.width,bgc.height);clusters.forEach(c=>{const pulse=c.r*(.9+.1*Math.sin(t*c.speed+c.phase));const g=bgx.createRadialGradient(c.x,c.y,0,c.x,c.y,pulse);g.addColorStop(0,c.col+'0.05)');g.addColorStop(1,c.col+'0)');bgx.fillStyle=g;bgx.beginPath();bgx.arc(c.x,c.y,pulse,0,Math.PI*2);bgx.fill();});bpts.forEach(p=>p.draw(t));t++;requestAnimationFrame(bgA);}
+bgA();
+const gc=document.getElementById('gc'),gcx=gc.getContext('2d');
+function rGc(){gc.width=window.innerWidth;gc.height=window.innerHeight;}rGc();window.addEventListener('resize',rGc);
+const GC=['#FF7E15','#0085FF','#62B4FF','#FFB07A','#ffffff','#F5EFE0'];
+const gpts=[];
+class GP{constructor(x,y){this.x=x;this.y=y;this.sz=Math.random()*3+.8;this.col=GC[Math.floor(Math.random()*GC.length)];this.al=1;this.vx=(Math.random()-.5)*1.2;this.vy=(Math.random()-.5)*1.2-.5;this.life=1;this.decay=Math.random()*.025+.012;this.tw=Math.random()*Math.PI*2;this.star=Math.random()>.6;}update(){this.x+=this.vx;this.y+=this.vy;this.life-=this.decay;this.tw+=.12;this.al=this.life*(.5+.5*Math.sin(this.tw));}draw(){gcx.save();gcx.globalAlpha=Math.max(0,this.al);gcx.fillStyle=this.col;if(this.star){gcx.translate(this.x,this.y);const s=this.sz*1.8;gcx.beginPath();for(let i=0;i<8;i++){const a=(i/8)*Math.PI*2,r=i%2===0?s:s*.38;i===0?gcx.moveTo(Math.cos(a)*r,Math.sin(a)*r):gcx.lineTo(Math.cos(a)*r,Math.sin(a)*r);}gcx.closePath();gcx.fill();}else{gcx.beginPath();gcx.arc(this.x,this.y,this.sz,0,Math.PI*2);gcx.fill();}gcx.restore();}}
+for(let i=0;i<60;i++)gpts.push(new GP(Math.random()*gc.width,Math.random()*gc.height));
+function gcA(){gcx.clearRect(0,0,gc.width,gc.height);for(let i=gpts.length-1;i>=0;i--){gpts[i].update();gpts[i].draw();if(gpts[i].life<=0)gpts.splice(i,1);}requestAnimationFrame(gcA);}
+gcA();
+document.addEventListener('mousemove',e=>{if(Math.random()>.45)for(let i=0;i<5;i++)gpts.push(new GP(e.clientX+(Math.random()-.5)*20,e.clientY+(Math.random()-.5)*20));});
+setLang('pl');
+</script>
+</body>
+</html>
